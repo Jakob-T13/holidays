@@ -11,16 +11,15 @@ from dataclasses import dataclass
 # 2. You may need to add additional functions
 # 3. You may drop the init if you are using @dataclasses
 # --------------------------------------------
-@dataclass
 class Holiday:
-    
-    name: str
-    date: datetime.datetime
+      
+    def __init__(self,name, date):
+        #Your Code Here        
     
     def __str__ (self):
         # String output
         # Holiday output when printed.
-        return f"{self.name} ({self.date})"
+          
            
 # -------------------------------------------
 # The HolidayList class acts as a wrapper and container
@@ -35,123 +34,32 @@ class HolidayList:
         # Make sure holidayObj is an Holiday Object by checking the type
         # Use innerHolidays.append(holidayObj) to add holiday
         # print to the user that you added a holiday
-        try:
-            #holidayObj is a Holiday object
-            verify = Holiday(holidayObj.name, holidayObj.date)
-            self.innerHolidays.append(verify)
-            print(f"Successfully added holiday {holidayObj}.")
-            return 0
-        except TypeError:
-            #holidayObj is not a Holiday object
-            print("Error: that is not a Holiday object.")
-            return 1
-        except:
-            #something else went wrong
-            print("Error: an unknown error occurred.")
-            return 1
-        return 1
 
     def findHoliday(HolidayName, Date):
         # Find Holiday in innerHolidays
         # Return Holiday
-        for i in self.innerHolidays:
-            if i.name == HolidayName and i.date = Date:
-                return i
-        return None
 
     def removeHoliday(HolidayName, Date):
         # Find Holiday in innerHolidays by searching the name and date combination.
         # remove the Holiday from innerHolidays
         # inform user you deleted the holiday
-        toRemove = findHoliday(HolidayName, Date)
-        if toRemove != None:
-            innerHolidays.remove(toRemove)
-            print(f"Successfully removed {toRemove}")
-        else:
-            print(f"Could not find a holiday '{HolidayName}' on {Date}.")
-        
+
     def read_json(filelocation):
         # Read in things from json file location
         # Use addHoliday function to add holidays to inner list.
-        try:
-            f = open(filelocation, "rt")
-        except:
-            print(f"Failed to open file '{filelocation}'. Check the file name and try again.")
-            return 1
-        
-        json_raw = f.read()
-        try:
-            dict_lst = json.loads(json_raw)
-        except:
-            print(f"'{filelocation}' is not a valid JSON file. Check the file's formatting and try again.")
-            return 1
-        
-        for i in dict_lst:
-            newHoliday = Holiday(i["name"],datetime.fromisoformat(i["date"]))
-            if addHoliday(newHoliday) == 1:
-                print(f"Error adding holiday '{newHoliday}'")
-                return 1
-        print(f"Successfully added holidays from {filelocation}")
-        f.close()
-        return 0
 
     def save_to_json(filelocation):
         # Write out json file to selected file.
-        f = open(filelocation,"wt")
-        f.write("[\n")
-        for i in self.innerHolidays:
-            f.write("{\n\t")
-            f.write(f'"name": "{i.name}",\n')
-            f.write(f'"date": "{i.date}"\n')
-            f.write("}")
-            if self.innerHolidays.index(i) < len(self.innerHolidays):
-                f.write(",\n")
-            else:
-                f.write("\n]")
-        print(f"Successfully wrote all holidays to {filelocation}.")
-        f.close()
         
     def scrapeHolidays():
         # Scrape Holidays from https://www.timeanddate.com/holidays/us/ 
         # Remember, 2 previous years, current year, and 2  years into the future. You can scrape multiple years by adding year to the timeanddate URL. For example https://www.timeanddate.com/holidays/us/2022
         # Check to see if name and date of holiday is in innerHolidays array
         # Add non-duplicates to innerHolidays
-        # Handle any exceptions. 
-        years = ["2020","2021","2022","2023","2024"]
-        months = {"Jan":"01","Feb":"02","Mar":"03","Apr":"04","May":"05","Jun":"06","Jul":"07","Aug":"08","Sep":"09","Oct":"10","Nov":"11","Dec":"12"}
-
-        for i in years:
-            url = f"https://www.timeanddate.com/holidays/us/{i}"
-            response = requests.get(url)
-            if response.status_code != 200:
-                print("Error connecting to www.timeanddate.com")
-                return 1
-            html_raw = response.text
-            
-            soup = BeautifulSoup(html_raw, 'html.parser')
-            holiday_table = soup.find('table',attrs={'id':'holidays-table'})
-            for row in holiday_table.find_all_next('tr',attrs={'class':'showrow'}):
-                date_tag = row.find('th')           #find the tag with the date in it
-                date_text = date_tag.string         #extract the raw string from the tag
-                date_month = date_text[0:2]         #extract the 3-letter month code
-                date_month = months[date_month]     #convert it to number code based on above dictionary
-                date_day = date_text[-2:].strip()   #extract the 2-digit day
-                if len(date_day) == 1:              #if day is only 1 digit (eg. '2')
-                    date_day = f"0{date_day}"       #convert it to 2-digit format (eg. '02')
-                combined_date = f"{i}-{date_month}-{date_day}"  #create formatted date
-                
-                name_tag = row.find('a')            #find the tag with the holiday name
-                name_text = name_tag.string         #extract the string from the tag
-                
-                if findHoliday(name_text, combined_date) == None:   #if new holiday is not in the list
-                    addHoliday(name_text, combined_date)            #add it to the list
-        
-        print("Successfully scraped holiday data for 2020-2024")
-        return 0
+        # Handle any exceptions.     
 
     def numHolidays():
         # Return the total number of holidays in innerHolidays
-        return len(innerHolidays)
     
     def filter_holidays_by_week(year, week_number):
         # Use a Lambda function to filter by week number and save this as holidays, use the filter on innerHolidays

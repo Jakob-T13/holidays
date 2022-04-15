@@ -1,0 +1,111 @@
+Holiday class:
+	+ name: str
+	+ date: datetime
+	
+HolidayList class:
+	+ innerHolidays: Holiday List
+	
+	addHoliday(holidayObj):
+		verify that holidayObj is a valid Holiday object
+		add holidayObj to the innerHolidays list if it's valid
+		error out if not
+		
+	findHoliday(name,date):
+		scan innerHolidays for a Holiday with given name and date
+		return the Holiday object if found, otherwise return None
+		
+	removeHoliday(name,date):
+		use findHoliday to find holiday
+		if found:
+			remove the Holiday from the list
+		else:
+			tell user the Holiday wasn't found
+			
+	read_json(filelocation):
+		try to open file at filelocation
+		error out if file not found
+		read file as text
+		convert text to dictionary list via json module
+		error out if conversion fails due to bad formatting
+		for each dict in the list:
+			create a new Holiday object with dictionary values
+			add the new object to innerHolidays
+	
+	save_to_json(filelocation):
+		open filelocation
+		for each Holiday object in innerHolidays:
+			write Holiday to filelocation in JSON format
+		close filelocation
+	
+	scrape_holidays():
+		establish list of years (2020-2024)
+		establish dict to convert 3-letter month name used to two-digit number (eg. 'Feb' to '02')
+		for each year:
+			open timeanddate.com/holidays/us/{year}
+			make sure response is good (HTTP 200)
+			error out if it's not
+			get raw HTML text
+			feed text into BeautifulSoup
+			find table of holidays
+			for each row in the table:
+				extract date
+				convert date to correct format (YYYY-MM-DD)
+				extract holiday name
+				check for duplicates
+				if no duplicates:
+					create Holiday object with given name and date
+					add the new object to the innerHolidays list
+					
+	numHolidays():
+		return length of innerHolidays list
+	
+	filter_holidays_by_week(year, week_number):
+		error out if week_number is < 1 or > 54
+		filter holidays to those with given year
+		filter holidays to those with given week number
+		return filter results as list
+		
+	displayHolidaysInWeek(holidayList):
+		for each holiday in holidayList:
+			print str(holiday)
+			
+	getWeather(weekNum):
+		get list of datetimes with given week number
+		first_day = min of list
+		last_day = max of list
+		try to contact weather API
+		error out if fails
+		get weather prediction/archive for given week number
+		error out if fails/unavailable
+		format response and return it
+	
+	viewCurrentWeek(withWeather)
+		look up current week/year
+		filter_holidays_by_week(currentyear,currentweek)
+		if withWeather:
+			getWeather(currentweek)
+			print weather and holidays for each day of currentweek
+		else:
+			print holidays for each day of currentweek
+
+
+main():
+	initialize holidayList
+	load from JSON file
+	display number of holidays loaded
+	scrape from holiday website
+	display number of holidays scraped
+	create while loop for main menu
+	main menu:
+		add holiday
+		remove holiday
+		save holiday list
+		view holidays
+		exit
+		
+	add/remove/save use respective functions from innerHolidays
+	view:
+		ask for year or current year
+		ask for week or current week
+		if current week:
+			ask for weather
