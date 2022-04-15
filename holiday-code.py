@@ -145,6 +145,9 @@ class HolidayList:
                 
                 if findHoliday(name_text, combined_date) == None:   #if new holiday is not in the list
                     addHoliday(name_text, combined_date)            #add it to the list
+        
+        print("Successfully scraped holiday data for 2020-2024")
+        return 0
 
     def numHolidays():
         # Return the total number of holidays in innerHolidays
