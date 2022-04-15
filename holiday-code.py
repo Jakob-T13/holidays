@@ -35,6 +35,21 @@ class HolidayList:
         # Make sure holidayObj is an Holiday Object by checking the type
         # Use innerHolidays.append(holidayObj) to add holiday
         # print to the user that you added a holiday
+        try:
+            #holidayObj is a Holiday object
+            verify = Holiday(holidayObj.name, holidayObj.date)
+            self.innerHolidays.append(verify)
+            print(f"Successfully added holiday {holidayObj}.")
+            return 0
+        except TypeError:
+            #holidayObj is not a Holiday object
+            print("Error: that is not a Holiday object.")
+            return 1
+        except:
+            #something else went wrong
+            print("Error: an unknown error occurred.")
+            return 1
+        return 1
 
     def findHoliday(HolidayName, Date):
         # Find Holiday in innerHolidays
