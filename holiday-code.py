@@ -160,10 +160,10 @@ class HolidayList:
         # return your holidays
         if year < 2020 or year > 2024:
             print("Error: year outside of valid range")
-            return 1
+            return None
         if week < 1 or week > 54:
             print("Error: week outside of valid range")
-            return 1
+            return None
         year_filter = list(filter(lambda n: n.date.year == year, self.innerHolidays))
         week_filter = list(filter(lambda n: n.date.isocalendar().week == week_number, year_filter))
         return week_filter
@@ -172,6 +172,8 @@ class HolidayList:
         # Use your filter_holidays_by_week to get list of holidays within a week as a parameter
         # Output formated holidays in the week. 
         # * Remember to use the holiday __str__ method.
+        for i in holidayList:
+            print(str(i))
 
     def getWeather(weekNum):
         # Convert weekNum to range between two days
