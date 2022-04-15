@@ -68,10 +68,32 @@ class HolidayList:
         if toRemove != None:
             innerHolidays.remove(toRemove)
             print(f"Successfully removed {toRemove}")
+        #error not found message already handled in findHoliday()
         
     def read_json(filelocation):
         # Read in things from json file location
         # Use addHoliday function to add holidays to inner list.
+        try:
+            f = open(filelocation, "rt")
+        except:
+            print(f"Failed to open file '{filelocation}'. Check the file name and try again.")
+            return 1
+        
+        json_raw = f.read()
+        try:
+            dict_lst = json.loads(json_raw)
+        except:
+            print(f"'{filelocation}' is not a valid JSON file. Check the file's formatting and try again.")
+            return 1
+        
+        for i in dict_lst:
+            newHoliday = Holiday(i["name"],datetime.fromisoformat(i["date"]))
+            if addHoliday(newHoliday) == 1:
+                print(f"Error adding holiday '{newHoliday}'")
+                return 1
+        print(f"Successfully added holidays from {filelocation}")
+        f.close()
+        return 0
 
     def save_to_json(filelocation):
         # Write out json file to selected file.
