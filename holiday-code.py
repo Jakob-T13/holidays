@@ -116,7 +116,29 @@ class HolidayList:
         # Remember, 2 previous years, current year, and 2  years into the future. You can scrape multiple years by adding year to the timeanddate URL. For example https://www.timeanddate.com/holidays/us/2022
         # Check to see if name and date of holiday is in innerHolidays array
         # Add non-duplicates to innerHolidays
-        # Handle any exceptions.     
+        # Handle any exceptions. 
+        years = ["2020","2021","2022","2023","2024"]
+        months = {"Jan":"01","Feb":"02","Mar":"03","Apr":"04","May":"05","Jun":"06","Jul":"07","Aug":"08","Sep":"09","Oct":"10","Nov":"11","Dec":"12"}
+
+        for i in years:
+            url = f"https://www.timeanddate.com/holidays/us/{i}"
+            response = requests.get(url)
+            if response.status_code != 200:
+                print("Error connecting to www.timeanddate.com")
+                return 1
+            html_raw = response.text
+            
+            soup = BeautifulSoup(html_raw, 'html.parser')
+            holiday_table = soup.find('table',attrs={'id':'holidays-table'})
+            for row in holiday_table.find_all_next('tr',attrs={'class':'showrow'}):
+                date_tag = row.find('th')           #find the tag with the date in it
+                date_text = date_tag.string         #extract the raw string from the tag
+                date_month = date_text[0:2]         #extract the 3-letter month code
+                date_month = months[date_month]     #convert it to number code based on above dictionary
+                date_day = date_text[-2:].strip()   #extract the 2-digit day
+                if len(date_day) == 1:              #if day is only 1 digit (eg. '2')
+                    date_day = f"0{date_day}"       #convert it to 2-digit format (eg. '02')
+                combined_date = f"{i}-{date_month}-{date_day}"  #create formatted date
 
     def numHolidays():
         # Return the total number of holidays in innerHolidays
