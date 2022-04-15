@@ -158,6 +158,15 @@ class HolidayList:
         # Week number is part of the the Datetime object
         # Cast filter results as list
         # return your holidays
+        if year < 2020 or year > 2024:
+            print("Error: year outside of valid range")
+            return 1
+        if week < 1 or week > 54:
+            print("Error: week outside of valid range")
+            return 1
+        year_filter = list(filter(lambda n: n.date.year == year, self.innerHolidays))
+        week_filter = list(filter(lambda n: n.date.isocalendar().week == week_number, year_filter))
+        return week_filter
 
     def displayHolidaysInWeek(holidayList):
         # Use your filter_holidays_by_week to get list of holidays within a week as a parameter
