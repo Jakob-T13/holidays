@@ -57,7 +57,6 @@ class HolidayList:
         for i in self.innerHolidays:
             if i.name == HolidayName and i.date = Date:
                 return i
-        print(f"Could not find a holiday '{HolidayName}' on {Date}.")
         return None
 
     def removeHoliday(HolidayName, Date):
@@ -68,7 +67,8 @@ class HolidayList:
         if toRemove != None:
             innerHolidays.remove(toRemove)
             print(f"Successfully removed {toRemove}")
-        #error not found message already handled in findHoliday()
+        else:
+        print(f"Could not find a holiday '{HolidayName}' on {Date}.")
         
     def read_json(filelocation):
         # Read in things from json file location
@@ -139,6 +139,12 @@ class HolidayList:
                 if len(date_day) == 1:              #if day is only 1 digit (eg. '2')
                     date_day = f"0{date_day}"       #convert it to 2-digit format (eg. '02')
                 combined_date = f"{i}-{date_month}-{date_day}"  #create formatted date
+                
+                name_tag = row.find('a')            #find the tag with the holiday name
+                name_text = name_tag.string         #extract the string from the tag
+                
+                if findHoliday(name_text, combined_date) == None:   #if new holiday is not in the list
+                    addHoliday(name_text, combined_date)            #add it to the list
 
     def numHolidays():
         # Return the total number of holidays in innerHolidays
