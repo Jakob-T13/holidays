@@ -97,6 +97,19 @@ class HolidayList:
 
     def save_to_json(filelocation):
         # Write out json file to selected file.
+        f = open(filelocation,"wt")
+        f.write("[\n")
+        for i in self.innerHolidays:
+            f.write("{\n\t")
+            f.write(f'"name": "{i.name}",\n')
+            f.write(f'"date": "{i.date}"\n')
+            f.write("}")
+            if self.innerHolidays.index(i) < len(self.innerHolidays):
+                f.write(",\n")
+            else:
+                f.write("\n]")
+        print(f"Successfully wrote all holidays to {filelocation}.")
+        f.close()
         
     def scrapeHolidays():
         # Scrape Holidays from https://www.timeanddate.com/holidays/us/ 
