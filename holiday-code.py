@@ -161,7 +161,7 @@ class HolidayList:
         if year < 2020 or year > 2024:
             print("Error: year outside of valid range")
             return None
-        if week < 1 or week > 54:
+        if week < 1 or week > 52:
             print("Error: week outside of valid range")
             return None
         year_filter = list(filter(lambda n: n.date.year == year, self.innerHolidays))
@@ -175,11 +175,36 @@ class HolidayList:
         for i in holidayList:
             print(str(i))
 
-    def getWeather(weekNum):
+    def getWeather():
         # Convert weekNum to range between two days
         # Use Try / Except to catch problems
         # Query API for weather in that week range
         # Format weather information and return weather string.
+        try:
+            url = "https://api.openweathermap.org/data/2.5/onecall?lat=44.97&lon=-93.26&exclude=current,minutely,hourly,alerts&units=imperial&appid=7bdf08f87f2b42a9e8956f9905feb0d3"
+            response = requests.get(url)
+        except:
+            print("Failed to connect to OpenWeather")
+            return None
+        
+        weather_json = response.json()
+        weather_lst_raw = weather_json['daily']
+        weather_lst = []
+        for i in weather_lst_raw:
+            high = i["temp"]["max"]
+            low = i["temp"]["min"]
+            wind = i["wind_speed"]
+            clouds = i["clouds"]
+            precip = i["pop"]
+            weather_dict = {
+                "high" : high,
+                "low" : low,
+                "wind_speed" : wind
+                "cloudiness" : f"{clouds}%"
+                "precipitation" : f"{precip}%"
+            }
+            weather_lst.append(weather_dict)
+        return weather_lst
 
     def viewCurrentWeek():
         # Use the Datetime Module to look up current week and year
