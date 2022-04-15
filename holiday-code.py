@@ -54,6 +54,11 @@ class HolidayList:
     def findHoliday(HolidayName, Date):
         # Find Holiday in innerHolidays
         # Return Holiday
+        for i in self.innerHolidays:
+            if i.name == HolidayName and i.date = Date:
+                return i
+        print(f"Could not find a holiday '{HolidayName}' on {Date}.")
+        return None
 
     def removeHoliday(HolidayName, Date):
         # Find Holiday in innerHolidays by searching the name and date combination.
