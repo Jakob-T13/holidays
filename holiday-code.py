@@ -64,7 +64,11 @@ class HolidayList:
         # Find Holiday in innerHolidays by searching the name and date combination.
         # remove the Holiday from innerHolidays
         # inform user you deleted the holiday
-
+        toRemove = findHoliday(HolidayName, Date)
+        if toRemove != None:
+            innerHolidays.remove(toRemove)
+            print(f"Successfully removed {toRemove}")
+        
     def read_json(filelocation):
         # Read in things from json file location
         # Use addHoliday function to add holidays to inner list.
