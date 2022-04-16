@@ -64,10 +64,10 @@ class HolidayList:
         # Find Holiday in innerHolidays by searching the name and date combination.
         # remove the Holiday from innerHolidays
         # inform user you deleted the holiday
-        toRemove = findHoliday(HolidayName, Date)
+        toRemove = self.findHoliday(HolidayName, Date)
         if toRemove != None:
-            innerHolidays.remove(toRemove)
-            print(f"Successfully removed {toRemove}")
+            self.innerHolidays.remove(toRemove)
+            # print(f"Successfully removed {toRemove}")
         else:
             print(f"Could not find a holiday '{HolidayName}' on {Date}.")
         
@@ -281,7 +281,23 @@ def user_add_holiday(menu,hlist):
     input("Press Enter to continue...")
     
 def user_remove_holiday(menu,hlist):
-    pass
+    os.system('cls')
+    print(menu[3])
+    valid_holiday = True
+    while valid_holiday:
+        hname = input("Holiday Name: ")
+        hdate = input("Holiday Date (YYYY-MM-DD): ")
+        try:
+            hfdate = datetime.datetime.fromisoformat(hdate)
+            if hlist.findHoliday(hname, hfdate) != None:
+                hlist.removeHoliday(hname, hfdate)
+                print(f"Successfully removed {hname} ({hdate}) from the holiday list.")
+            else:
+                print("Error: Could not find that holiday. Check the name and date, and try again.")
+            valid_holiday = False
+        except:
+            print("Error: invalid date. Please try again.")
+    input("Press Enter to continue...")
     
 def user_save_holiday(menu,hlist):
     pass
