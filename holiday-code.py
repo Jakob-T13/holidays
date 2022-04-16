@@ -258,6 +258,39 @@ class HolidayList:
                     print(f"\tChance of precipitation: {i['weather']['precipitation']}%")
         return 0
 
+def user_add_holiday(menu,hlist):
+    os.system('cls')
+    print(menu[2])
+    hname = input("Holiday: ")
+    valid_date = True
+    while valid_date:
+        hdate = input("Date (YYYY-MM-DD): ")
+        try:
+            hfdate = datetime.datetime.fromisoformat(hdate)
+            valid_date = False
+        except:
+            print("Error: invalid date. Please try again.")
+    if hlist.findHoliday(hname, hfdate) == None:
+        new_holiday = Holiday(hname,hfdate)
+        hlist.addHoliday(new_holiday)
+        print("Success:")
+        print(f"{str(new_holiday)} has been added to the holiday list.")
+    else:
+        print("Failure:")
+        print("That holiday is already in the holiday list.")
+    input("Press Enter to continue...")
+    
+def user_remove_holiday(menu,hlist):
+    pass
+    
+def user_save_holiday(menu,hlist):
+    pass
+    
+def user_view_holiday(menu,hlist):
+    pass
+    
+def user_exit(menu,hlist):
+    pass
 
 def main():
     # Large Pseudo Code steps
@@ -291,15 +324,15 @@ def main():
         print(menus[1])
         ui = input("@> ")
         if ui == '1':
-            user_add_holiday(holidaylst)
+            user_add_holiday(menus,holidaylst)
         elif ui == '2':
-            user_remove_holiday(holidaylst)
+            user_remove_holiday(menus,holidaylst)
         elif ui == '3':
-            user_save_holiday(holidaylst)
+            user_save_holiday(menus,holidaylst)
         elif ui == '4':
-            user_view_holiday(holidaylst)
+            user_view_holiday(menus,holidaylst)
         elif ui == '5':
-            user_exit(holidaylst)
+            user_exit(menus,holidaylst)
         else:
             print("Command not recognized.")
             input("Press Enter to continue...")
