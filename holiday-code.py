@@ -28,10 +28,10 @@ class Holiday:
 # Each method has pseudo-code instructions
 # --------------------------------------------
 class HolidayList:
-   def __init__(self):
-       self.innerHolidays = []
+    def __init__(self):
+        self.innerHolidays = []
    
-    def addHoliday(holidayObj):
+    def addHoliday(self,holidayObj):
         # Make sure holidayObj is an Holiday Object by checking the type
         # Use innerHolidays.append(holidayObj) to add holiday
         # print to the user that you added a holiday
@@ -51,15 +51,15 @@ class HolidayList:
             return 1
         return 1
 
-    def findHoliday(HolidayName, Date):
+    def findHoliday(self, HolidayName, Date):
         # Find Holiday in innerHolidays
         # Return Holiday
         for i in self.innerHolidays:
-            if i.name == HolidayName and i.date = Date:
+            if i.name == HolidayName and i.date == Date:
                 return i
         return None
 
-    def removeHoliday(HolidayName, Date):
+    def removeHoliday(self, HolidayName, Date):
         # Find Holiday in innerHolidays by searching the name and date combination.
         # remove the Holiday from innerHolidays
         # inform user you deleted the holiday
@@ -70,7 +70,7 @@ class HolidayList:
         else:
             print(f"Could not find a holiday '{HolidayName}' on {Date}.")
         
-    def read_json(filelocation):
+    def read_json(self, filelocation):
         # Read in things from json file location
         # Use addHoliday function to add holidays to inner list.
         try:
@@ -81,21 +81,28 @@ class HolidayList:
         
         json_raw = f.read()
         try:
-            dict_lst = json.loads(json_raw)
+            json_form = json.loads(json_raw)
         except:
             print(f"'{filelocation}' is not a valid JSON file. Check the file's formatting and try again.")
             return 1
-        
+            
+        try:
+            dict_lst = json_form['holidays']
+        except:
+            print(f"'{filelocation}' is not correctly formatted. Make sure it consists of the following format:")
+            print("{'Holidays': [{'name': <name>, 'date': <ISO date>}, ...]")
+            return 1
         for i in dict_lst:
-            newHoliday = Holiday(i["name"],datetime.fromisoformat(i["date"]))
-            if addHoliday(newHoliday) == 1:
+            newHoliday = Holiday(i["name"],datetime.datetime.fromisoformat(i["date"]))
+            added = self.addHoliday(newHoliday)
+            if added == 1:
                 print(f"Error adding holiday '{newHoliday}'")
                 return 1
-        print(f"Successfully added holidays from {filelocation}")
+        # print(f"Successfully added holidays from {filelocation}")
         f.close()
         return 0
 
-    def save_to_json(filelocation):
+    def save_to_json(self, filelocation):
         # Write out json file to selected file.
         f = open(filelocation,"wt")
         f.write("[\n")
@@ -111,7 +118,7 @@ class HolidayList:
         print(f"Successfully wrote all holidays to {filelocation}.")
         f.close()
         
-    def scrapeHolidays():
+    def scrapeHolidays(self):
         # Scrape Holidays from https://www.timeanddate.com/holidays/us/ 
         # Remember, 2 previous years, current year, and 2  years into the future. You can scrape multiple years by adding year to the timeanddate URL. For example https://www.timeanddate.com/holidays/us/2022
         # Check to see if name and date of holiday is in innerHolidays array
@@ -149,11 +156,11 @@ class HolidayList:
         print("Successfully scraped holiday data for 2020-2024")
         return 0
 
-    def numHolidays():
+    def numHolidays(self):
         # Return the total number of holidays in innerHolidays
-        return len(innerHolidays)
+        return len(self.innerHolidays)
     
-    def filter_holidays_by_week(year, week_number):
+    def filter_holidays_by_week(self, year, week_number):
         # Use a Lambda function to filter by week number and save this as holidays, use the filter on innerHolidays
         # Week number is part of the the Datetime object
         # Cast filter results as list
@@ -168,14 +175,14 @@ class HolidayList:
         week_filter = list(filter(lambda n: n.date.isocalendar().week == week_number, year_filter))
         return week_filter
 
-    def displayHolidaysInWeek(holidayList):
+    def displayHolidaysInWeek(self, holidayList):
         # Use your filter_holidays_by_week to get list of holidays within a week as a parameter
         # Output formated holidays in the week. 
         # * Remember to use the holiday __str__ method.
         for i in holidayList:
             print(str(i))
 
-    def getWeather():   #due to the way my chosen weather API works, I can't use a week number to get weather for that static week, only a 'rolling' week
+    def getWeather(self):   #due to the way my chosen weather API works, I can't use a week number to get weather for that static week, only a 'rolling' week
         # Convert weekNum to range between two days
         # Use Try / Except to catch problems
         # Query API for weather in that week range
@@ -190,7 +197,7 @@ class HolidayList:
         dates = []
         today = datetime.today()
         dates.append(today)
-        newday = today += datetime.timedelta(days=1)
+        newday = today + datetime.timedelta(days=1)
         for i in range(2,8):
             dates.append(newday)
             newday += datetime.timedelta(days=1)
@@ -206,31 +213,31 @@ class HolidayList:
             precip = i["pop"]
             weather_dict = {
                 "date" : dates[weather_lst_raw.index(i)],
-                "weather" = {
+                "weather" : {
                     "high" : high,
                     "low" : low,
-                    "wind_speed" : wind
-                    "cloudiness" : clouds
+                    "wind_speed" : wind,
+                    "cloudiness" : clouds,
                     "precipitation" : precip * 100
                 }
             }
             weather_lst.append(weather_dict)
         return weather_lst
 
-    def viewCurrentWeek():
+    def viewCurrentWeek(self):
         # Use the Datetime Module to look up current week and year
         # Use your filter_holidays_by_week function to get the list of holidays 
         # for the current week/year
         # Use your displayHolidaysInWeek function to display the holidays in the week
         # Ask user if they want to get the weather
         # If yes, use your getWeather function and display results
-        thisyear = datetime.today().isocalendar().year
-        thisweek = datetime.today().isocalendar().week
+        thisyear = datetime.datetime.today().isocalendar().year
+        thisweek = datetime.datetime.today().isocalendar().week
         holidays_lst = filter_holidays_by_week(thisyear,thisweek)
         if holidays_lst == None:
             print("Error retrieving holidays")
             return None
-        elif holidays_lst == []
+        elif holidays_lst == []:
             print("There are no holidays this week.")
             return 0
         else:
@@ -260,7 +267,11 @@ def main():
     # 5. Take user input for their action based on Menu and check the user input for errors
     # 6. Run appropriate method from the HolidayList object depending on what the user input is
     # 7. Ask the User if they would like to Continue, if not, end the while loop, ending the program.  If they do wish to continue, keep the program going. 
-
+    print("Holiday Management")
+    print("==================")
+    holidaylst = HolidayList()
+    holidaylst.read_json('holidays.json')
+    print(f"There are {holidaylst.numHolidays()} holidays stored in the system.")
 
 if __name__ == "__main__":
     main();
