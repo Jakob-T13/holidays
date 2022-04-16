@@ -175,7 +175,7 @@ class HolidayList:
         for i in holidayList:
             print(str(i))
 
-    def getWeather():
+    def getWeather():   #due to the way my chosen weather API works, I can't use a week number to get weather for that static week, only a 'rolling' week
         # Convert weekNum to range between two days
         # Use Try / Except to catch problems
         # Query API for weather in that week range
@@ -187,6 +187,14 @@ class HolidayList:
             print("Failed to connect to OpenWeather")
             return None
         
+        dates = []
+        today = datetime.today()
+        dates.append(today)
+        newday = today += datetime.timedelta(days=1)
+        for i in range(2,8):
+            dates.append(newday)
+            newday += datetime.timedelta(days=1)
+        
         weather_json = response.json()
         weather_lst_raw = weather_json['daily']
         weather_lst = []
@@ -197,11 +205,14 @@ class HolidayList:
             clouds = i["clouds"]
             precip = i["pop"]
             weather_dict = {
-                "high" : high,
-                "low" : low,
-                "wind_speed" : wind
-                "cloudiness" : f"{clouds}%"
-                "precipitation" : f"{precip}%"
+                "date" : dates[weather_lst_raw.index(i)],
+                "weather" = {
+                    "high" : high,
+                    "low" : low,
+                    "wind_speed" : wind
+                    "cloudiness" : clouds
+                    "precipitation" : precip * 100
+                }
             }
             weather_lst.append(weather_dict)
         return weather_lst
@@ -213,7 +224,29 @@ class HolidayList:
         # Use your displayHolidaysInWeek function to display the holidays in the week
         # Ask user if they want to get the weather
         # If yes, use your getWeather function and display results
-
+        thisyear = datetime.today().isocalendar().year
+        thisweek = datetime.today().isocalendar().week
+        holidays_lst = filter_holidays_by_week(thisyear,thisweek)
+        if holidays_lst == None:
+            print("Error retrieving holidays")
+            return None
+        elif holidays_lst == []
+            print("There are no holidays this week.")
+            return 0
+        else:
+            displayHolidaysInWeek(holidays_lst)
+        weather = input("Would you like to view this week's weather? y or n: ").lower()
+        if weather == 'y':
+            weather_lst = getWeather(thisweek)
+            if weather_lst != None:
+                for i in weather_lst:
+                    print(i["date"])
+                    print(f"\tHigh temp: {i['weather']['high']} degrees F")
+                    print(f"\tLow temp: {i['weather']['low']} degrees F")
+                    print(f"\tWind Speed: {i['weather']['wind_speed']} mph")
+                    print(f"\tCloudiness: {i['weather']['cloudiness']}%")
+                    print(f"\tChance of precipitation: {i['weather']['precipitation']}%")
+        return 0
 
 
 def main():
