@@ -39,7 +39,7 @@ class HolidayList:
             #holidayObj is a Holiday object
             verify = Holiday(holidayObj.name, holidayObj.date)
             self.innerHolidays.append(verify)
-            print(f"Successfully added holiday {holidayObj}.")
+            # print(f"Successfully added holiday {holidayObj}.")
             return 0
         except TypeError:
             #holidayObj is not a Holiday object
@@ -136,24 +136,26 @@ class HolidayList:
             html_raw = response.text
             
             soup = BeautifulSoup(html_raw, 'html.parser')
-            holiday_table = soup.find('table',attrs={'id':'holidays-table'})
-            for row in holiday_table.find_all_next('tr',attrs={'class':'showrow'}):
-                date_tag = row.find('th')           #find the tag with the date in it
-                date_text = date_tag.string         #extract the raw string from the tag
-                date_month = date_text[0:2]         #extract the 3-letter month code
-                date_month = months[date_month]     #convert it to number code based on above dictionary
-                date_day = date_text[-2:].strip()   #extract the 2-digit day
-                if len(date_day) == 1:              #if day is only 1 digit (eg. '2')
-                    date_day = f"0{date_day}"       #convert it to 2-digit format (eg. '02')
-                combined_date = f"{i}-{date_month}-{date_day}"  #create formatted date
-                
-                name_tag = row.find('a')            #find the tag with the holiday name
-                name_text = name_tag.string         #extract the string from the tag
-                
-                if findHoliday(name_text, combined_date) == None:   #if new holiday is not in the list
-                    addHoliday(name_text, combined_date)            #add it to the list
+            holiday_table = soup.find('tbody')
+            for row in holiday_table.find_all('tr'):
+                if 'hol_' not in row.get('id'):
+                    date_tag = row.find('th')           #find the tag with the date in it
+                    date_text = date_tag.string         #extract the raw string from the tag
+                    date_month = date_text[0:3]         #extract the 3-letter month code
+                    date_month = months[date_month]     #convert it to number code based on above dictionary
+                    date_day = date_text[-2:].strip()   #extract the 2-digit day
+                    if len(date_day) == 1:              #if day is only 1 digit (eg. '2')
+                        date_day = f"0{date_day}"       #convert it to 2-digit format (eg. '02')
+                    combined_date = f"{i}-{date_month}-{date_day}"  #create formatted date
+                    
+                    name_tag = row.find('a')            #find the tag with the holiday name
+                    name_text = name_tag.string         #extract the string from the tag
+                    
+                    if self.findHoliday(name_text, combined_date) == None:  #if new holiday is not in the list
+                        new_holiday = Holiday(name_text, combined_date)
+                        self.addHoliday(new_holiday)                        #add it to the list
         
-        print("Successfully scraped holiday data for 2020-2024")
+        # print("Successfully scraped holiday data for 2020-2024")
         return 0
 
     def numHolidays(self):
@@ -271,7 +273,13 @@ def main():
     print("==================")
     holidaylst = HolidayList()
     holidaylst.read_json('holidays.json')
-    print(f"There are {holidaylst.numHolidays()} holidays stored in the system.")
+    first_len = holidaylst.numHolidays()
+    print(f"There are {first_len} holidays stored in the system.")
+    
+    holidaylst.scrapeHolidays()
+    second_len = holidaylst.numHolidays() - first_len
+    print(f"An additional {second_len} holidays were scraped from timeanddate.com.")
+    input("Press Enter to continue...")
 
 if __name__ == "__main__":
     main();
