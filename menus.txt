@@ -1,0 +1,25 @@
+ Holiday Management
+====================
+;
+ Main Menu
+===========
+1. Add a Holiday
+2. Remove a Holiday
+3. Save Holiday List
+4. View Holidays
+5. Exit
+;
+ Add a Holiday
+===============
+;
+ Remove a Holiday
+==================
+;
+ Save Holiday List
+===================
+;
+ View Holidays
+===============
+;
+ Exit
+======
