@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 from bs4 import BeautifulSoup
 import requests
 from dataclasses import dataclass
@@ -269,8 +270,11 @@ def main():
     # 5. Take user input for their action based on Menu and check the user input for errors
     # 6. Run appropriate method from the HolidayList object depending on what the user input is
     # 7. Ask the User if they would like to Continue, if not, end the while loop, ending the program.  If they do wish to continue, keep the program going. 
-    print("Holiday Management")
-    print("==================")
+    menufile = open('menus.txt','rt')
+    menutxt = menufile.read()
+    menus = menutxt.split(';\n')
+    menufile.close()
+    print(menus[0])
     holidaylst = HolidayList()
     holidaylst.read_json('holidays.json')
     first_len = holidaylst.numHolidays()
@@ -280,6 +284,28 @@ def main():
     second_len = holidaylst.numHolidays() - first_len
     print(f"An additional {second_len} holidays were scraped from timeanddate.com.")
     input("Press Enter to continue...")
+    os.system('cls')
+    
+    is_running = True
+    while is_running:
+        print(menus[1])
+        ui = input("@> ")
+        if ui == '1':
+            user_add_holiday(holidaylst)
+        elif ui == '2':
+            user_remove_holiday(holidaylst)
+        elif ui == '3':
+            user_save_holiday(holidaylst)
+        elif ui == '4':
+            user_view_holiday(holidaylst)
+        elif ui == '5':
+            user_exit(holidaylst)
+        else:
+            print("Command not recognized.")
+            input("Press Enter to continue...")
+        os.system('cls')
+    
+    
 
 if __name__ == "__main__":
     main();
