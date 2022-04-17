@@ -171,10 +171,10 @@ class HolidayList:
         # Week number is part of the the Datetime object
         # Cast filter results as list
         # return your holidays
-        if year < 2020 or year > 2024:
-            print("Error: year outside of valid range")
-            return None
-        if week < 1 or week > 52:
+        # if year < 2020 or year > 2024:
+            # print("Error: year outside of valid range")
+            # return None
+        if week_number < 1 or week_number > 52:
             print("Error: week outside of valid range")
             return None
         year_filter = list(filter(lambda n: n.date.year == year, self.innerHolidays))
@@ -201,24 +201,26 @@ class HolidayList:
             return None
         
         dates = []
-        today = datetime.today()
+        today = datetime.datetime.today()
         dates.append(today)
         newday = today + datetime.timedelta(days=1)
         for i in range(2,8):
             dates.append(newday)
             newday += datetime.timedelta(days=1)
+            
+        print(dates)
         
         weather_json = response.json()
         weather_lst_raw = weather_json['daily']
         weather_lst = []
-        for i in weather_lst_raw:
-            high = i["temp"]["max"]
-            low = i["temp"]["min"]
-            wind = i["wind_speed"]
-            clouds = i["clouds"]
-            precip = i["pop"]
+        for i in range(7):
+            high = weather_lst_raw[i]["temp"]["max"]
+            low = weather_lst_raw[i]["temp"]["min"]
+            wind = weather_lst_raw[i]["wind_speed"]
+            clouds = weather_lst_raw[i]["clouds"]
+            precip = weather_lst_raw[i]["pop"]
             weather_dict = {
-                "date" : dates[weather_lst_raw.index(i)],
+                "date" : dates[i],
                 "weather" : {
                     "high" : high,
                     "low" : low,
@@ -239,7 +241,7 @@ class HolidayList:
         # If yes, use your getWeather function and display results
         thisyear = datetime.datetime.today().isocalendar().year
         thisweek = datetime.datetime.today().isocalendar().week
-        holidays_lst = filter_holidays_by_week(thisyear,thisweek)
+        holidays_lst = self.filter_holidays_by_week(thisyear,thisweek)
         if holidays_lst == None:
             print("Error retrieving holidays")
             return None
@@ -247,10 +249,10 @@ class HolidayList:
             print("There are no holidays this week.")
             return 0
         else:
-            displayHolidaysInWeek(holidays_lst)
+            self.displayHolidaysInWeek(holidays_lst)
         weather = input("Would you like to view this week's weather? y or n: ").lower()
         if weather == 'y':
-            weather_lst = getWeather(thisweek)
+            weather_lst = self.getWeather()
             if weather_lst != None:
                 for i in weather_lst:
                     print(i["date"])
@@ -319,7 +321,44 @@ def user_save_holiday(menu,hlist):
     input("Press Enter to continue...")
     
 def user_view_holiday(menu,hlist):
-    pass
+    os.system('cls')
+    print(menu[5])
+    valid_year = True
+    while valid_year:
+        year = input("Which year? [Leave blank for current year]: ")
+        if year == '':
+            year = datetime.datetime.today().isocalendar().year
+        try:
+            year = int(year)
+            valid_year = False
+        except:
+            print("Error: invalid value for year. Please try again.")
+    valid_week = True
+    thisweek = False
+    while valid_week:
+        week = input("Which week? [1-52, leave blank for current week]: ")
+        if week == '':
+            thisweek = True
+            week = datetime.datetime.today().isocalendar().week
+        try:
+            week = int(week)
+            if week < 1 or week > 52:
+                print("Error: invalid week number. Please try again.")
+            else:
+                valid_week = False
+        except:
+            print("Error: invalid value for week. Please try again.")
+    
+    print(f"These are the holidays for {year} week #{week}:")
+    if thisweek:
+        hlist.viewCurrentWeek()
+    else:
+        to_show = hlist.filter_holidays_by_week(year,week)
+        if to_show == []:
+            print("There are no holidays this week.")
+        else:
+            hlist.displayHolidaysInWeek(to_show)
+    input("Press Enter to continue...")
     
 def user_exit(menu,hlist):
     pass
