@@ -22,7 +22,7 @@ class Holiday:
         # String output
         # Holiday output when printed.
         return f"{self.name} ({self.date})"
-           
+                   
 # -------------------------------------------
 # The HolidayList class acts as a wrapper and container
 # For the list of holidays
@@ -31,6 +31,12 @@ class Holiday:
 class HolidayList:
     def __init__(self):
         self.innerHolidays = []
+        
+    def __eq__(self,other):
+        for i in self.innerHolidays:
+            if i not in other.innerHolidays:
+                return False
+        return True
    
     def addHoliday(self,holidayObj):
         # Make sure holidayObj is an Holiday Object by checking the type
@@ -360,8 +366,21 @@ def user_view_holiday(menu,hlist):
             hlist.displayHolidaysInWeek(to_show)
     input("Press Enter to continue...")
     
-def user_exit(menu,hlist):
-    pass
+def user_exit(menu):
+    os.system('cls')
+    print(menu[6])
+    valid_input = True
+    while valid_input:
+        ui = input("Are you sure you want to exit? Any unsaved changes will be lost. [y/n] ").lower()
+        if ui == 'y' or ui == 'n':
+            valid_input = False
+        else:
+            print("Error: invalid input. Please try again.")
+    if ui == 'y':
+        print("Goodbye!")
+        exit(0)
+    else:
+        input("Press Enter to return to the main menu...")
 
 def main():
     # Large Pseudo Code steps
@@ -381,6 +400,7 @@ def main():
     print(menus[0])
     holidaylst = HolidayList()
     holidaylst.read_json('holidays.json')
+    starting_lst = holidaylst
     first_len = holidaylst.numHolidays()
     print(f"There are {first_len} holidays stored in the system.")
     
@@ -403,7 +423,7 @@ def main():
         elif ui == '4':
             user_view_holiday(menus,holidaylst)
         elif ui == '5':
-            user_exit(menus,holidaylst)
+            user_exit(menus)
         else:
             print("Command not recognized.")
             input("Press Enter to continue...")
