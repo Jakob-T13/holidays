@@ -2,7 +2,7 @@
 Python assessment involving scraping a web page for holidays, putting that information into objects, and displaying that information cleanly.
 
 ## Usage
-Upon startup, the main program will open 'holidays.json' and read its data, then scrape holiday data from [timeanddate](https://www.timeanddate.com/holidays/us/). Following that, the user will be brought to an interactive main menu.
+Upon startup, the main program will open `holidays.json` and read its data, then scrape holiday data from [timeanddate](https://www.timeanddate.com/holidays/us/). Following that, the user will be brought to an interactive main menu.
 
 ### Add Holiday
 To add a holiday to the list, select the first option from the main menu. From there, the user is promped for a name and a date in ISO format (`YYYY-MM-DD`), allowing for retries if the date is incorrectly formatted. If the holiday name and date combination doesn't exist in the list, then the new holiday is added; otherwise, the user is informed of the duplicate entry. In either case, the user is then returned to the main menu.
