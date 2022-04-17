@@ -106,16 +106,18 @@ class HolidayList:
     def save_to_json(self, filelocation):
         # Write out json file to selected file.
         f = open(filelocation,"wt")
-        f.write("[\n")
+        list_len = len(self.innerHolidays)
+        f.write('{\n "holidays" : [\n')
         for i in self.innerHolidays:
-            f.write("{\n\t")
-            f.write(f'"name": "{i.name}",\n')
-            f.write(f'"date": "{i.date}"\n')
-            f.write("}")
-            if self.innerHolidays.index(i) < len(self.innerHolidays):
+            f.write("\t {\n")
+            f.write(f'\t\t "name": "{i.name}",\n')
+            f.write(f'\t\t "date": "{i.date}"\n')
+            f.write("\t }")
+            if self.innerHolidays.index(i) < list_len-1:
                 f.write(",\n")
             else:
-                f.write("\n]")
+                f.write("\n ]\n")
+        f.write('}')
         print(f"Successfully wrote all holidays to {filelocation}.")
         f.close()
         
@@ -147,13 +149,14 @@ class HolidayList:
                     date_day = date_text[-2:].strip()   #extract the 2-digit day
                     if len(date_day) == 1:              #if day is only 1 digit (eg. '2')
                         date_day = f"0{date_day}"       #convert it to 2-digit format (eg. '02')
-                    combined_date = f"{i}-{date_month}-{date_day}"  #create formatted date
+                    combined_date = f"{i}-{date_month}-{date_day}"  #create ISO formatted date string
+                    iso_date = datetime.datetime.fromisoformat(combined_date)   #convert string to date
                     
                     name_tag = row.find('a')            #find the tag with the holiday name
                     name_text = name_tag.string         #extract the string from the tag
                     
-                    if self.findHoliday(name_text, combined_date) == None:  #if new holiday is not in the list
-                        new_holiday = Holiday(name_text, combined_date)
+                    if self.findHoliday(name_text, iso_date) == None:  #if new holiday is not in the list
+                        new_holiday = Holiday(name_text, iso_date)
                         self.addHoliday(new_holiday)                        #add it to the list
         
         # print("Successfully scraped holiday data for 2020-2024")
@@ -300,7 +303,20 @@ def user_remove_holiday(menu,hlist):
     input("Press Enter to continue...")
     
 def user_save_holiday(menu,hlist):
-    pass
+    os.system('cls')
+    print(menu[4])
+    in_menu = True
+    while in_menu:
+        ui = input("Are you sure you want to save your changes? [y/n]: ").lower()
+        if ui == 'y':
+            hlist.save_to_json('holidays.json')
+            in_menu = False
+        elif ui == 'n':
+            print("Holiday list file save canceled.")
+            in_menu = False
+        else:
+            print("Please type 'y' or 'n'.")
+    input("Press Enter to continue...")
     
 def user_view_holiday(menu,hlist):
     pass
